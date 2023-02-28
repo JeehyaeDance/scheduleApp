@@ -1,7 +1,6 @@
 package helper;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
 
 public abstract class JDBC {
     private static final String protocol = "jdbc";
@@ -34,4 +33,28 @@ public abstract class JDBC {
         }
     }
 
+    public static boolean checkLogin(String userName, String password)
+    {
+        PreparedStatement statement;
+        ResultSet res;
+        boolean checkUser = false;
+        String query = "SELECT * FROM `users` WHERE `User_Name` =?";
+
+        try {
+            statement = connection.prepareStatement(query);
+            statement.setString(1, userName);
+
+            res = statement.executeQuery();
+
+            if(res.next())
+            {
+                if(password.equals(res.getString("Password"))) {
+                    checkUser = true;
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println("login error: " + ex);
+        }
+        return checkUser;
+    }
 }
