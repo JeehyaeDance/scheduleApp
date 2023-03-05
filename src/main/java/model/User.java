@@ -1,5 +1,10 @@
 package model;
 
+import helper.JDBC;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class User {
@@ -19,5 +24,39 @@ public class User {
         this.createdBy = createdBy;
         this.lastUpdate = lastUpdate;
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public static User getById(int userId) {
+        PreparedStatement statement;
+        ResultSet res;
+        String query = "SELECT * FROM `users` WHERE `User_ID` =?";
+        User user = null;
+
+        try {
+            statement = JDBC.connection.prepareStatement(query);
+            statement.setString(1, String.valueOf(userId));
+
+            res = statement.executeQuery();
+
+            if(res.next())
+            {
+                user = new User(
+                        Integer.valueOf(res.getString("User_ID")),
+                        res.getString("User_Name"),
+                        res.getString("Password"),
+                        res.getTimestamp("Create_Date").toLocalDateTime(),
+                        res.getString("Created_By"),
+                        res.getTimestamp("Last_Update").toLocalDateTime(),
+                        res.getString("Last_Updated_By")
+                );
+            }
+        } catch (SQLException ex) {
+            System.out.println("error from User.getById: " + ex);
+        }
+        return user;
+    }
+
+    public String getName() {
+        return name;
     }
 }

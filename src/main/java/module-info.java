@@ -5,5 +5,7 @@ module scheduleapp.scheduleapp {
 
 
     opens scheduleapp.scheduleapp to javafx.fxml;
+    opens model;
+
     exports scheduleapp.scheduleapp;
 }

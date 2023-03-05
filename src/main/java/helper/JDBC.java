@@ -1,6 +1,12 @@
 package helper;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import model.Appointment;
+import model.Customer;
+
 import java.sql.*;
+import java.time.LocalDateTime;
 
 public abstract class JDBC {
     private static final String protocol = "jdbc";
@@ -56,5 +62,78 @@ public abstract class JDBC {
             System.out.println("login error: " + ex);
         }
         return checkUser;
+    }
+
+    public static ObservableList<Customer> getAllCustomers() {
+        PreparedStatement statement;
+        ResultSet res;
+        ObservableList<Customer> customers = FXCollections.observableArrayList();
+        Customer newCustomer = null;
+
+        String query = "SELECT * FROM `customers`";
+
+        try {
+            statement = connection.prepareStatement(query);
+            res = statement.executeQuery();
+
+            while(res.next()){
+                int customerId = Integer.parseInt(res.getString("Customer_ID"));
+                String customerName = res.getString("Customer_Name");
+                String address = res.getString("Address");
+                String postalCode = res.getString("Postal_code");
+                String phone = res.getString("Phone");
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+                int divisionId = Integer.parseInt(res.getString("Division_ID"));
+
+                newCustomer = new Customer(customerId, customerName, address, postalCode, phone,createDate,createdBy,lastUpdate,lastUpdatedBy, divisionId);
+                customers.add(newCustomer);
+            }
+
+        } catch (SQLException ex){
+            System.out.println("error from getAllCustomers: " + ex);
+        }
+        return customers;
+    }
+
+    public static ObservableList<Appointment> getAllAppointments() {
+        PreparedStatement statement;
+        ResultSet res;
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+        Appointment newAppointment = null;
+
+        String query = "SELECT * FROM `appointments`";
+
+        try {
+            statement = connection.prepareStatement(query);
+            res = statement.executeQuery();
+
+            while(res.next()){
+                int id = Integer.parseInt(res.getString("Appointment_ID"));
+                String title = res.getString("Title");
+                String description = res.getString("Description");
+                String location = res.getString("Location");
+                String type = res.getString("Type");
+                LocalDateTime start = res.getTimestamp("Start").toLocalDateTime();
+                LocalDateTime end = res.getTimestamp("End").toLocalDateTime();
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+                int customerId = Integer.parseInt(res.getString("Customer_ID"));
+                int userId = Integer.parseInt(res.getString("User_ID"));
+                int contactId = Integer.parseInt(res.getString("Contact_ID"));
+
+
+                newAppointment = new Appointment(id, title, description, location, type, start, end, createDate,createdBy,lastUpdate,lastUpdatedBy, customerId, userId, contactId);
+                appointments.add(newAppointment);
+            }
+
+        } catch (SQLException ex){
+            System.out.println("error from getAllCustomers: " + ex);
+        }
+        return appointments;
     }
 }

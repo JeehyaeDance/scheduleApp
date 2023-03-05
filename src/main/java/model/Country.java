@@ -1,5 +1,10 @@
 package model;
 
+import helper.JDBC;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class Country {
@@ -17,5 +22,38 @@ public class Country {
         this.createdBy = createdBy;
         this.lastUpdate = lastUpdate;
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public static Country getById (int countryId) {
+        PreparedStatement statement;
+        ResultSet res;
+        String query = "SELECT * FROM `countries` WHERE `Country_ID` =?";
+        Country country = null;
+
+        try {
+            statement = JDBC.connection.prepareStatement(query);
+            statement.setString(1, String.valueOf(countryId));
+
+            res = statement.executeQuery();
+
+            if(res.next())
+            {
+                country = new Country(
+                        Integer.valueOf(res.getString("Country_ID")),
+                        res.getString("Country"),
+                        res.getTimestamp("Create_Date").toLocalDateTime(),
+                        res.getString("Created_By"),
+                        res.getTimestamp("Last_Update").toLocalDateTime(),
+                        res.getString("Last_Updated_By")
+                        );
+            }
+        } catch (SQLException ex) {
+            System.out.println("error from Country.getById: " + ex);
+        }
+        return country;
+    }
+
+    public String getCountry() {
+        return country;
     }
 }

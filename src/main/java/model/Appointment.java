@@ -35,4 +35,58 @@ public class Appointment {
         this.contactId = contactId;
     }
 
+    public Customer customer() {
+        return Customer.getById(customerId);
+    }
+
+    public Contact contact() {
+        return Contact.getById(contactId);
+    }
+
+    public User user() {
+        return User.getById(userId);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
+    }
+
+    public String getCustomerName() {
+        Customer customer = customer();
+        return customer.getName();
+    }
+
+    public String getContactName() {
+        Contact contact = contact();
+        return contact.getName();
+    }
+
+    public String getUserName() {
+        User user = user();
+        return user.getName();
+    }
 }
