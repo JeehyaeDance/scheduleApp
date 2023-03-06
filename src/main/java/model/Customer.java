@@ -84,6 +84,8 @@ public class Customer {
         return name;
     }
 
+    public String getAddress() {return address;}
+
     public String getFullAddress() {
         FirstLevelDivision division = firstLevelDivision();
         return address + ", " + division.getDivision() + ", " + division.country().getCountry();

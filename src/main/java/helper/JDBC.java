@@ -240,4 +240,53 @@ public abstract class JDBC {
         }
         return newCustomer;
     }
+
+    public static Customer modifyCustomer(String name, String address, String postalCode, String phone, int divisionId, int customerId) {
+        ResultSet res;
+        Customer updatedCustomer = null;
+
+        String updateQuery = "UPDATE `customers` SET Customer_Name=?, Address=?, Postal_code=?, Phone=?, Division_ID=?, Last_Update=NOW() " +
+                "WHERE `Customer_ID` =?";
+        try {
+            PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+            updateStatement.setString(1, name);
+            updateStatement.setString(2, address);
+            updateStatement.setString(3, postalCode);
+            updateStatement.setString(4, phone);
+            updateStatement.setInt(5, divisionId);
+            updateStatement.setInt(6, customerId);
+            updateStatement.execute();
+
+            String getQuery = "SELECT * FROM `customers` WHERE `Customer_ID` =?";
+            PreparedStatement getStatement = connection.prepareStatement(getQuery);
+            getStatement.setInt(1, customerId);
+            res = getStatement.executeQuery();
+
+            if(res.next()) {
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+
+                updatedCustomer = new Customer(customerId, name, address, postalCode, phone, createDate,createdBy,lastUpdate,lastUpdatedBy, divisionId);
+            }
+        }
+        catch(SQLException ex) {
+            System.out.println("error from modifyCustomer: " + ex);
+        }
+        return updatedCustomer;
+    }
+
+    public static void deleteCustomer(Customer selectedCustomer) {
+        ResultSet res;
+        String deleteQuery = "DELETE FROM `customers` WHERE `Customer_ID` =?";
+        try {
+            PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
+            deleteStatement.setInt(1, selectedCustomer.getId());
+            deleteStatement.execute();
+        }
+        catch(SQLException ex) {
+            System.out.println("error from deleteCustomer: " + ex);
+        }
+    }
 }

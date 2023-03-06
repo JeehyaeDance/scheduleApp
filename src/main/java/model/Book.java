@@ -20,6 +20,8 @@ public class Book {
     public static void addCustomer(Customer newCustomer) {
         allCustomers.add(newCustomer);
     }
+    public static void updateCustomer(int index, Customer updatedCustomer) { allCustomers.set(index, updatedCustomer); }
+    public static boolean deleteCustomer(Customer customerToDelete) { return allCustomers.remove(customerToDelete); }
     public static ObservableList<Customer> getAllCustomers() { return allCustomers; }
     public static ObservableList<Appointment> getAllAppointments() { return allAppointments; }
     public static ObservableList<FirstLevelDivision> getAllDivisions() { return allDivisions; }

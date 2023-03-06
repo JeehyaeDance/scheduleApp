@@ -17,7 +17,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class addModifyCustomerController implements Initializable {
+    private static Customer selectedCustomer = null;
     public TextField addressInput;
+    public TextField idInput;
     private ObservableList<FirstLevelDivision> allDivisions = Book.getAllDivisions();
     private ObservableList<Country> allCountries = Book.getAllCountries();
     public Label addModifyCustomerLabel;
@@ -27,6 +29,13 @@ public class addModifyCustomerController implements Initializable {
     public TextField postalCodeInput;
     public ComboBox divisionCombo;
     public Label errorMessage;
+
+    /** static method to set a customer for modify.
+     * @param customer the customer to set for modify
+     */
+    public static void setModifyCustomer (Customer customer) {
+        selectedCustomer = customer;
+    }
 
     public void submitForm(ActionEvent actionEvent) throws IOException {
         StringBuilder errors = new StringBuilder("");
@@ -63,8 +72,14 @@ public class addModifyCustomerController implements Initializable {
             return;
         }
 
-        Customer newCustomer = JDBC.addNewCustomer(name, address, postalCode, phone, selectedDivision.getId());
-        Book.addCustomer(newCustomer);
+        if (selectedCustomer == null) {
+            Customer newCustomer = JDBC.addNewCustomer(name, address, postalCode, phone, selectedDivision.getId());
+            Book.addCustomer(newCustomer);
+        } else {
+            int replaceIndex = Book.getAllCustomers().indexOf(selectedCustomer);
+            Customer updatedCustomer = JDBC.modifyCustomer(name, address, postalCode, phone, selectedDivision.getId(), selectedCustomer.getId());
+            Book.updateCustomer(replaceIndex, updatedCustomer);
+        }
         toMainForm(actionEvent);
     }
 
@@ -75,16 +90,33 @@ public class addModifyCustomerController implements Initializable {
     /**  This method reloads a scene with the main form. */
     public void toMainForm(ActionEvent actionEvent) throws IOException {
         loginFormController.loadNewScene(actionEvent, "mainForm.fxml", 1050, 700 );
+        selectedCustomer = null;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         countryCombo.setItems(allCountries);
-        countryCombo.getSelectionModel().selectFirst();
-
         divisionCombo.setItems(allDivisions);
         divisionCombo.setPromptText("Select division here");
         divisionCombo.setVisibleRowCount(5);
+
+        if (selectedCustomer == null) {
+            countryCombo.getSelectionModel().selectFirst();
+        } else {
+            String id = String.valueOf(selectedCustomer.getId());
+            String name = selectedCustomer.getName();
+            String address = selectedCustomer.getAddress();
+            String phone = selectedCustomer.getPhone();
+            String postalCode = selectedCustomer.getPostalCode();
+
+            idInput.setText(id);
+            customerNameInput.setText(name);
+            addressInput.setText(address);
+            phoneNumberInput.setText(phone);
+            postalCodeInput.setText(postalCode);
+            countryCombo.getSelectionModel().select(selectedCustomer.firstLevelDivision().country());
+            divisionCombo.getSelectionModel().select(selectedCustomer.firstLevelDivision());
+        }
     }
 
     public void onSelectCountry(ActionEvent actionEvent) {

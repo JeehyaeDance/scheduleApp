@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,6 +17,7 @@ import model.Customer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class mainFormController implements Initializable {
@@ -62,10 +65,26 @@ public class mainFormController implements Initializable {
         Customer selectedCustomer = (Customer) customersTable.getSelectionModel().getSelectedItem();
         if (selectedCustomer == null)
             return;
+        addModifyCustomerController.setModifyCustomer(selectedCustomer);
         loginFormController.loadNewScene(actionEvent, "addModifyCustomer.fxml", 1050, 700);
     }
 
     public void deleteCustomer(ActionEvent actionEvent) {
+        Customer selectedCustomer = (Customer) customersTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null)
+            return;
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you really want to delete this customer?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isPresent() && result.get() == ButtonType.OK){
+            JDBC.deleteCustomer(selectedCustomer);
+            boolean deleteResult = Book.deleteCustomer(selectedCustomer);
+            if(!deleteResult){
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setContentText("delete was not successful.");
+            }
+        }
     }
 
     @Override
