@@ -63,4 +63,13 @@ public class FirstLevelDivision   {
     public String getDivision() {
         return division;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String toString(){
+        return ("#" + Integer.toString(id) + " " + division);
+    }
 }

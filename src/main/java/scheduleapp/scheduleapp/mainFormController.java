@@ -10,8 +10,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Appointment;
+import model.Book;
 import model.Customer;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,8 +29,8 @@ public class mainFormController implements Initializable {
     public TableColumn endDateCol;
     public TableColumn customerCol;
     public TableColumn userCol;
-    private ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
-    private ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
+    private ObservableList<Customer> allCustomers = Book.getAllCustomers();
+    private ObservableList<Appointment> allAppointments = Book.getAllAppointments();
     public TableView customersTable;
     public TableColumn customerTableIdCol;
     public TableColumn customerNameCol;
@@ -52,10 +54,15 @@ public class mainFormController implements Initializable {
     public void openCustomersTab(Event event) {
     }
 
-    public void addNewCustomer(ActionEvent actionEvent) {
+    public void addNewCustomer(ActionEvent actionEvent) throws IOException {
+        loginFormController.loadNewScene(actionEvent, "addModifyCustomer.fxml", 1050, 700);
     }
 
-    public void modifyCustomer(ActionEvent actionEvent) {
+    public void modifyCustomer(ActionEvent actionEvent) throws IOException {
+        Customer selectedCustomer = (Customer) customersTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null)
+            return;
+        loginFormController.loadNewScene(actionEvent, "addModifyCustomer.fxml", 1050, 700);
     }
 
     public void deleteCustomer(ActionEvent actionEvent) {
@@ -63,9 +70,6 @@ public class mainFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        allCustomers = JDBC.getAllCustomers();
-        allAppointments = JDBC.getAllAppointments();
-
         customersTable.setItems(allCustomers);
         customerTableIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         customerNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -85,7 +89,5 @@ public class mainFormController implements Initializable {
         contactCol.setCellValueFactory(new PropertyValueFactory<>("contactName"));
         userCol.setCellValueFactory(new PropertyValueFactory<>("userName"));
         customerCol.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-
-
     }
 }

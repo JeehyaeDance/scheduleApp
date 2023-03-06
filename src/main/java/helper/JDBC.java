@@ -3,7 +3,9 @@ package helper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Appointment;
+import model.Country;
 import model.Customer;
+import model.FirstLevelDivision;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -77,7 +79,7 @@ public abstract class JDBC {
             res = statement.executeQuery();
 
             while(res.next()){
-                int customerId = Integer.parseInt(res.getString("Customer_ID"));
+                int customerId = res.getInt("Customer_ID");
                 String customerName = res.getString("Customer_Name");
                 String address = res.getString("Address");
                 String postalCode = res.getString("Postal_code");
@@ -86,7 +88,7 @@ public abstract class JDBC {
                 String createdBy = res.getString("Created_By");
                 LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
                 String lastUpdatedBy = res.getString("Last_Updated_By");
-                int divisionId = Integer.parseInt(res.getString("Division_ID"));
+                int divisionId = res.getInt("Division_ID");
 
                 newCustomer = new Customer(customerId, customerName, address, postalCode, phone,createDate,createdBy,lastUpdate,lastUpdatedBy, divisionId);
                 customers.add(newCustomer);
@@ -111,7 +113,7 @@ public abstract class JDBC {
             res = statement.executeQuery();
 
             while(res.next()){
-                int id = Integer.parseInt(res.getString("Appointment_ID"));
+                int id = res.getInt("Appointment_ID");
                 String title = res.getString("Title");
                 String description = res.getString("Description");
                 String location = res.getString("Location");
@@ -122,9 +124,9 @@ public abstract class JDBC {
                 String createdBy = res.getString("Created_By");
                 LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
                 String lastUpdatedBy = res.getString("Last_Updated_By");
-                int customerId = Integer.parseInt(res.getString("Customer_ID"));
-                int userId = Integer.parseInt(res.getString("User_ID"));
-                int contactId = Integer.parseInt(res.getString("Contact_ID"));
+                int customerId = res.getInt("Customer_ID");
+                int userId = res.getInt("User_ID");
+                int contactId = res.getInt("Contact_ID");
 
 
                 newAppointment = new Appointment(id, title, description, location, type, start, end, createDate,createdBy,lastUpdate,lastUpdatedBy, customerId, userId, contactId);
@@ -135,5 +137,107 @@ public abstract class JDBC {
             System.out.println("error from getAllCustomers: " + ex);
         }
         return appointments;
+    }
+
+    public static ObservableList<FirstLevelDivision> getSelectiveDivisions(int selectedCountryId) {
+        PreparedStatement statement;
+        ResultSet res;
+        ObservableList<FirstLevelDivision> divisions = FXCollections.observableArrayList();
+        FirstLevelDivision newDivision = null;
+
+        String query = "SELECT * FROM `first_level_divisions` WHERE COUNTRY_ID =?";
+
+        try {
+            statement = connection.prepareStatement(query);
+            statement.setString(1, String.valueOf(selectedCountryId));
+            res = statement.executeQuery();
+
+            while(res.next()){
+                int id = res.getInt("Division_ID");
+                String division = res.getString("Division");
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+                int countryId = res.getInt("COUNTRY_ID");
+
+                newDivision = new FirstLevelDivision(id, division, createDate,createdBy,lastUpdate,lastUpdatedBy, countryId);
+                divisions.add(newDivision);
+            }
+
+        } catch (SQLException ex){
+            System.out.println("error from getAllDivisions: " + ex);
+        }
+        return divisions;
+    }
+
+    public static ObservableList<Country> getAllCountries() {
+        PreparedStatement statement;
+        ResultSet res;
+        ObservableList<Country> countries = FXCollections.observableArrayList();
+        Country newCountry = null;
+
+        String query = "SELECT * FROM `countries`";
+
+        try {
+            statement = connection.prepareStatement(query);
+            res = statement.executeQuery();
+
+            while(res.next()){
+                int id = res.getInt("Country_ID");
+                String country = res.getString("Country");
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+
+                newCountry = new Country(id, country, createDate,createdBy,lastUpdate,lastUpdatedBy);
+                countries.add(newCountry);
+            }
+
+        } catch (SQLException ex){
+            System.out.println("error from getAllCountries: " + ex);
+        }
+        return countries;
+    }
+
+    public static Customer addNewCustomer(String name, String address, String postalCode, String phone, int divisionId) {
+        PreparedStatement insertStatement;
+        ResultSet res;
+        Customer newCustomer = null;
+
+        String insertQuery = "INSERT INTO `customers` (Customer_Name, Address, Postal_code, Phone, Division_ID) VALUES(?,?,?,?,?)";
+        try {
+            insertStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+            insertStatement.setString(1, name);
+            insertStatement.setString(2, address);
+            insertStatement.setString(3, postalCode);
+            insertStatement.setString(4, phone);
+            insertStatement.setInt(5, divisionId);
+            insertStatement.execute();
+
+            res = insertStatement.getGeneratedKeys();
+
+            res.next();
+            int createdCustomerId = res.getInt(1);
+
+            String getQuery = "SELECT * FROM `customers` WHERE `Customer_ID` =?";
+            PreparedStatement getStatement = connection.prepareStatement(getQuery);
+            getStatement.setInt(1, createdCustomerId);
+            res = getStatement.executeQuery();
+
+            if(res.next()) {
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+
+                newCustomer = new Customer(createdCustomerId, name, address, postalCode, phone, createDate,createdBy,lastUpdate,lastUpdatedBy, divisionId);
+            }
+        }
+        catch(SQLException ex) {
+            System.out.println("error from addNewCustomer: " + ex);
+        }
+        return newCustomer;
     }
 }

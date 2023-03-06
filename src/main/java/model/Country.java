@@ -56,4 +56,11 @@ public class Country {
     public String getCountry() {
         return country;
     }
+
+    public int getId() { return id; }
+
+    @Override
+    public String toString(){
+        return ("#" + Integer.toString(id) + " " + country);
+    }
 }
