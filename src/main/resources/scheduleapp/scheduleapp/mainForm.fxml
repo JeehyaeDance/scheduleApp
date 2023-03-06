@@ -7,7 +7,7 @@
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1050.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduleapp.scheduleapp.mainFormController">
   <tabs>
-    <Tab fx:id="appointmentsTab" onSelectionChanged="#openAppointmentsTab" text="Appointments">
+    <Tab fx:id="appointmentsTab" text="Appointments">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -90,7 +90,7 @@
                </children></AnchorPane>
       </content>
     </Tab>
-    <Tab fx:id="customersTab" onSelectionChanged="#openCustomersTab" text="Customers">
+    <Tab fx:id="customersTab" text="Customers">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>

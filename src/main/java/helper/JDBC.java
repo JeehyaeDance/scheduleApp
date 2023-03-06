@@ -2,10 +2,7 @@ package helper;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.Appointment;
-import model.Country;
-import model.Customer;
-import model.FirstLevelDivision;
+import model.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -64,6 +61,36 @@ public abstract class JDBC {
             System.out.println("login error: " + ex);
         }
         return checkUser;
+    }
+
+    public static User getUser(String userName)
+    {
+        PreparedStatement statement;
+        ResultSet res;
+        User user = null;
+        String query = "SELECT * FROM `users` WHERE `User_Name` =?";
+
+        try {
+            statement = connection.prepareStatement(query);
+            statement.setString(1, userName);
+
+            res = statement.executeQuery();
+
+            if(res.next()) {
+                user = new User(
+                        Integer.valueOf(res.getString("User_ID")),
+                        res.getString("User_Name"),
+                        res.getString("Password"),
+                        res.getTimestamp("Create_Date").toLocalDateTime(),
+                        res.getString("Created_By"),
+                        res.getTimestamp("Last_Update").toLocalDateTime(),
+                        res.getString("Last_Updated_By")
+                );
+            }
+        } catch (SQLException ex) {
+            System.out.println("getUser error: " + ex);
+        }
+        return user;
     }
 
     public static ObservableList<Customer> getAllCustomers() {
@@ -288,5 +315,61 @@ public abstract class JDBC {
         catch(SQLException ex) {
             System.out.println("error from deleteCustomer: " + ex);
         }
+    }
+
+    public static ObservableList<Contact> getAllContacts() {
+        PreparedStatement statement;
+        ResultSet res;
+        ObservableList<Contact> contacts = FXCollections.observableArrayList();
+        Contact newContact = null;
+
+        String query = "SELECT * FROM `contacts`";
+
+        try {
+            statement = connection.prepareStatement(query);
+            res = statement.executeQuery();
+
+            while(res.next()){
+                int id = res.getInt("Contact_ID");
+                String name = res.getString("Contact_Name");
+                String email = res.getString("Email");
+
+                newContact = new Contact(id, name, email);
+                contacts.add(newContact);
+            }
+        } catch (SQLException ex){
+            System.out.println("error from getAllContacts: " + ex);
+        }
+        return contacts;
+    }
+
+    public static ObservableList<User> getAllUsers() {
+        PreparedStatement statement;
+        ResultSet res;
+        ObservableList<User> users = FXCollections.observableArrayList();
+        User newUser = null;
+
+        String query = "SELECT * FROM `users`";
+
+        try {
+            statement = connection.prepareStatement(query);
+            res = statement.executeQuery();
+            while(res.next()){
+                newUser = new User(
+                        Integer.valueOf(res.getString("User_ID")),
+                        res.getString("User_Name"),
+                        res.getString("Password"),
+                        res.getTimestamp("Create_Date").toLocalDateTime(),
+                        res.getString("Created_By"),
+                        res.getTimestamp("Last_Update").toLocalDateTime(),
+                        res.getString("Last_Updated_By")
+                );
+                users.add(newUser);
+            }
+        }
+        catch (SQLException ex){
+            System.out.println("error from getAllUsers: " + ex);
+        }
+        return users;
     }
 }

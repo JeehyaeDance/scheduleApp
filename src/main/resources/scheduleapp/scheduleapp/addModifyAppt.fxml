@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduleapp.scheduleapp.addModifyApptController">
    <children>
       <VBox layoutX="14.0" layoutY="26.0" prefHeight="648.0" prefWidth="1011.0" spacing="10.0">
          <children>
@@ -88,8 +79,8 @@
                         <TextField fx:id="descriptionInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="locationInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="typeInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <TextField maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <TextField maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <TextField fx:id="startInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <TextField fx:id="endInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                         <Label text="Customer" GridPane.rowIndex="8">
                            <font>
                               <Font name="Calibri" size="14.0" />
@@ -100,8 +91,9 @@
                               <Font name="Calibri" size="14.0" />
                            </font>
                         </Label>
-                        <ComboBox prefHeight="22.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <ComboBox prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <ComboBox fx:id="contactCombo" prefHeight="22.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="customerCombo" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <ComboBox fx:id="userCombo" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                      </children>
                   </GridPane>
                   <Label fx:id="errorMessage" prefHeight="279.0" prefWidth="344.0" wrapText="true">

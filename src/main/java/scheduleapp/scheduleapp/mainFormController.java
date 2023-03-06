@@ -42,19 +42,14 @@ public class mainFormController implements Initializable {
     public TableColumn phoneCol;
     public TableColumn createdDateCol;
 
-    public void openAppointmentsTab(Event event) {
-    }
-
-    public void addNewAppointment(ActionEvent actionEvent) {
+    public void addNewAppointment(ActionEvent actionEvent) throws IOException {
+        loginFormController.loadNewScene(actionEvent, "addModifyAppt.fxml", 1050, 700);
     }
 
     public void modifyAppointment(ActionEvent actionEvent) {
     }
 
     public void deleteAppointment(ActionEvent actionEvent) {
-    }
-
-    public void openCustomersTab(Event event) {
     }
 
     public void addNewCustomer(ActionEvent actionEvent) throws IOException {

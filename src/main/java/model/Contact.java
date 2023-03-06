@@ -46,4 +46,9 @@ public class Contact {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString(){
+        return ("#" + Integer.toString(id) + " " + name);
+    }
 }

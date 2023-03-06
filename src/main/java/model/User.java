@@ -56,7 +56,10 @@ public class User {
         return user;
     }
 
-    public String getName() {
-        return name;
+    public String getName() { return name; }
+
+    @Override
+    public String toString(){
+        return ("#" + Integer.toString(id) + " " + name);
     }
 }

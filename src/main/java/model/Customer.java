@@ -103,4 +103,9 @@ public class Customer {
         return createdDate;
     }
 
+    @Override
+    public String toString(){
+        return ("#" + Integer.toString(id) + " " + name);
+    }
+
 }
