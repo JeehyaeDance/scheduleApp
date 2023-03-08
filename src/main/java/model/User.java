@@ -57,6 +57,7 @@ public class User {
     }
 
     public String getName() { return name; }
+    public int getId() { return id; }
 
     @Override
     public String toString(){

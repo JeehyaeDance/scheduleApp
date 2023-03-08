@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import model.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public abstract class JDBC {
@@ -371,5 +372,49 @@ public abstract class JDBC {
             System.out.println("error from getAllUsers: " + ex);
         }
         return users;
+    }
+
+    public static Appointment addNewAppointment(String title, String description, String location, String type, Contact contact, Customer customer, User user, LocalDateTime startDt, LocalDateTime endDt) {
+        PreparedStatement insertStatement;
+        ResultSet res;
+        Appointment newAppointment = null;
+
+        String insertQuery = "INSERT INTO `appointments` (Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID) VALUES(?,?,?,?,?,?,?,?,?)";
+        try {
+            insertStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+            insertStatement.setString(1, title);
+            insertStatement.setString(2, description);
+            insertStatement.setString(3, location);
+            insertStatement.setString(4, type);
+            insertStatement.setTimestamp(5, Timestamp.valueOf(startDt));
+            insertStatement.setTimestamp(6, Timestamp.valueOf(endDt));
+            insertStatement.setInt(7, customer.getId());
+            insertStatement.setInt(8, user.getId());
+            insertStatement.setInt(9, contact.getId());
+            insertStatement.execute();
+
+            res = insertStatement.getGeneratedKeys();
+
+            res.next();
+            int createdApptId = res.getInt(1);
+
+            String getQuery = "SELECT * FROM `appointments` WHERE `Appointment_ID` =?";
+            PreparedStatement getStatement = connection.prepareStatement(getQuery);
+            getStatement.setInt(1, createdApptId);
+            res = getStatement.executeQuery();
+
+            if(res.next()) {
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+
+                newAppointment = new Appointment(createdApptId, title, description, location, type, startDt, endDt, createDate,createdBy,lastUpdate,lastUpdatedBy, customer.getId(), user.getId(), contact.getId());
+            }
+        }
+        catch(SQLException ex) {
+            System.out.println("error from addNewAppointment: " + ex);
+        }
+        return newAppointment;
     }
 }

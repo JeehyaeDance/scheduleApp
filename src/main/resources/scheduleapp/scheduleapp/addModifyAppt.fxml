@@ -14,7 +14,7 @@
                   <Font name="Calibri Bold" size="18.0" />
                </font>
             </Label>
-            <HBox prefHeight="453.0" prefWidth="991.0" spacing="20.0">
+            <HBox prefHeight="579.0" prefWidth="991.0" spacing="20.0">
                <children>
                   <GridPane maxWidth="500.0" prefHeight="386.0" prefWidth="500.0">
                     <columnConstraints>
@@ -22,16 +22,17 @@
                       <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="721.0" minWidth="10.0" prefWidth="305.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="52.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="123.0" minHeight="5.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="132.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="147.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="145.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="123.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="177.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="37.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Appointment_ID">
@@ -64,12 +65,12 @@
                               <Font name="Calibri" size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Start Date and Time" GridPane.rowIndex="6">
+                        <Label text="Start Time" GridPane.rowIndex="7">
                            <font>
                               <Font name="Calibri" size="14.0" />
                            </font>
                         </Label>
-                        <Label text="End Date and Time" GridPane.rowIndex="7">
+                        <Label text="End Time" GridPane.rowIndex="8">
                            <font>
                               <Font name="Calibri" size="14.0" />
                            </font>
@@ -79,21 +80,27 @@
                         <TextField fx:id="descriptionInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="locationInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="typeInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <TextField fx:id="startInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <TextField fx:id="endInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Label text="Customer" GridPane.rowIndex="8">
+                        <Label text="Customer" GridPane.rowIndex="9">
                            <font>
                               <Font name="Calibri" size="14.0" />
                            </font>
                         </Label>
-                        <Label text="User" GridPane.rowIndex="9">
+                        <Label text="User" GridPane.rowIndex="10">
                            <font>
                               <Font name="Calibri" size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="contactCombo" prefHeight="22.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <ComboBox fx:id="customerCombo" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <ComboBox fx:id="userCombo" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <ComboBox fx:id="customerCombo" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <ComboBox fx:id="userCombo" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <DatePicker fx:id="dateCal" onAction="#onSelectDate" prefHeight="25.0" prefWidth="199.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label text="Appointment Date" GridPane.rowIndex="6">
+                           <font>
+                              <Font name="Calibri" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="startCombo" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <ComboBox fx:id="endCombo" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                      </children>
                   </GridPane>
                   <Label fx:id="errorMessage" prefHeight="279.0" prefWidth="344.0" wrapText="true">

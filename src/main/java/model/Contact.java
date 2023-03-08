@@ -46,6 +46,7 @@ public class Contact {
     public String getName() {
         return name;
     }
+    public int getId() { return id; }
 
     @Override
     public String toString(){
