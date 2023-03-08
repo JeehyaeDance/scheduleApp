@@ -307,11 +307,16 @@ public abstract class JDBC {
 
     public static void deleteCustomer(Customer selectedCustomer) {
         ResultSet res;
-        String deleteQuery = "DELETE FROM `customers` WHERE `Customer_ID` =?";
+        String deleteApptQuery = "DELETE FROM `appointments` WHERE `Customer_ID` =?";
+        String deleteCustQuery = "DELETE FROM `customers` WHERE `Customer_ID` =?";
         try {
-            PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
-            deleteStatement.setInt(1, selectedCustomer.getId());
-            deleteStatement.execute();
+            PreparedStatement deleteApptStatement = connection.prepareStatement(deleteApptQuery);
+            deleteApptStatement.setInt(1, selectedCustomer.getId());
+            deleteApptStatement.execute();
+
+            PreparedStatement deleteCustStatement = connection.prepareStatement(deleteCustQuery);
+            deleteCustStatement.setInt(1, selectedCustomer.getId());
+            deleteCustStatement.execute();
         }
         catch(SQLException ex) {
             System.out.println("error from deleteCustomer: " + ex);

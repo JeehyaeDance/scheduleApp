@@ -23,7 +23,15 @@ public class Book {
 
     public static void addCustomer(Customer newCustomer) { allCustomers.add(newCustomer); }
     public static void updateCustomer(int index, Customer updatedCustomer) { allCustomers.set(index, updatedCustomer); }
-    public static boolean deleteCustomer(Customer customerToDelete) { return allCustomers.remove(customerToDelete); }
+    public static boolean deleteCustomer(Customer customerToDelete) {
+        for(int i = 0; i < allAppointments.size(); ++i) {
+            Appointment currentAppointment = allAppointments.get(i);
+            if (currentAppointment.getCustomerId() == customerToDelete.getId()) {
+                allAppointments.remove(currentAppointment);
+            }
+        }
+        return allCustomers.remove(customerToDelete);
+    }
     public static ObservableList<Customer> getAllCustomers() { return allCustomers; }
     public static void addAppointment(Appointment newAppointment) { allAppointments.add(newAppointment); }
     public static ObservableList<Appointment> getAllAppointments() { return allAppointments; }

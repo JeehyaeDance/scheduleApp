@@ -75,6 +75,8 @@ public class Appointment {
         return end;
     }
 
+    public int getCustomerId() { return customerId;}
+
     public String getCustomerName() {
         Customer customer = customer();
         return customer.getName();
