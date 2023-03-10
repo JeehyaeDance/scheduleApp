@@ -101,8 +101,10 @@ public class addModifyCustomerController implements Initializable {
         divisionCombo.setVisibleRowCount(5);
 
         if (selectedCustomer == null) {
+            addModifyCustomerLabel.setText("Add New Customer");
             countryCombo.getSelectionModel().selectFirst();
         } else {
+            addModifyCustomerLabel.setText("Modify Customer");
             String id = String.valueOf(selectedCustomer.getId());
             String name = selectedCustomer.getName();
             String address = selectedCustomer.getAddress();

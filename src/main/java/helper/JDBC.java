@@ -379,6 +379,44 @@ public abstract class JDBC {
         return users;
     }
 
+    public static ObservableList<Appointment> getAppointmentsByCustomer (Customer customer) {
+        PreparedStatement getStatement;
+        ResultSet res;
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+        Appointment newAppointment = null;
+
+        String getQuery = "SELECT * FROM `appointments` WHERE `Customer_ID` =?";
+
+        try {
+            getStatement = connection.prepareStatement(getQuery);
+            getStatement.setInt(1, customer.getId());
+            res = getStatement.executeQuery();
+
+            while(res.next()) {
+                int id = res.getInt("Appointment_ID");
+                String title = res.getString("Title");
+                String description = res.getString("Description");
+                String apptLocation = res.getString("Location");
+                String type = res.getString("Type");
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = res.getString("Last_Updated_By");
+                LocalDateTime startDt = res.getTimestamp("Start").toLocalDateTime();
+                LocalDateTime endDt = res.getTimestamp("End").toLocalDateTime();
+                int userId = res.getInt("User_ID");
+                int contactId = res.getInt("Contact_ID");
+
+                newAppointment = new Appointment(id, title, description, apptLocation, type, startDt, endDt, createDate,createdBy,lastUpdate,lastUpdatedBy, customer.getId(), userId, contactId);
+                appointments.add(newAppointment);
+            }
+        }
+        catch(SQLException ex) {
+            System.out.println("error from getAppointmentsByCustomer: " + ex);
+        }
+        return appointments;
+    }
+
     public static Appointment addNewAppointment(String title, String description, String location, String type, Contact contact, Customer customer, User user, LocalDateTime startDt, LocalDateTime endDt) {
         PreparedStatement insertStatement;
         ResultSet res;

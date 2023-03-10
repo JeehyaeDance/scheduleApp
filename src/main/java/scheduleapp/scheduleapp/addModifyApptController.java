@@ -1,14 +1,11 @@
 package scheduleapp.scheduleapp;
 
 import helper.JDBC;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.util.Callback;
 import model.*;
 
 import java.io.IOException;
@@ -21,6 +18,7 @@ public class addModifyApptController implements Initializable {
     public DatePicker dateCal;
     public ComboBox startCombo;
     public ComboBox endCombo;
+    public TextField idInput;
     private ObservableList<Contact> allContact = Book.getAllContacts();
     private ObservableList<Customer> allCustomer = Book.getAllCustomers();
     private ObservableList<User> allUser = Book.getAllUsers();
@@ -35,9 +33,14 @@ public class addModifyApptController implements Initializable {
     public ComboBox contactCombo;
     public ComboBox customerCombo;
     public ComboBox userCombo;
+    ZoneId targetZoneId = ZoneId.of("America/New_York");
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm a");
 
     public static void setLoggedinUser (User user) {
         loggedinUser = user;
+    }
+    public static void setSelectedAppointment (Appointment appointment) {
+        selectedAppointment = appointment;
     }
 
     /**  This method reloads a scene with the main form. */
@@ -58,11 +61,9 @@ public class addModifyApptController implements Initializable {
         User user = (User) userCombo.getSelectionModel().getSelectedItem();
         Object startTime = startCombo.getSelectionModel().getSelectedItem();
         Object endTime = endCombo.getSelectionModel().getSelectedItem();
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm a");
         LocalDateTime startDt = LocalDateTime.parse((CharSequence) startTime, format);
         LocalDateTime endDt = LocalDateTime.parse((CharSequence) endTime, format);
 
-        System.out.println(startTime);
         if (title.isBlank()) {
             errors.append("Customer Name is empty");
             errors.append(System.lineSeparator());
@@ -107,6 +108,16 @@ public class addModifyApptController implements Initializable {
             return;
         }
 
+        ObservableList<Appointment> appointmentsForThisCustomer = JDBC.getAppointmentsByCustomer(customer);
+
+        if (appointmentsForThisCustomer.size() > 0) {
+            String overlapMessage = checkTimeOverlap(startDt, endDt, appointmentsForThisCustomer);
+            if (overlapMessage.length() > 0) {
+                errorMessage.setText(overlapMessage);
+                return;
+            }
+        }
+
         if (selectedAppointment == null) {
             Appointment newAppointment = JDBC.addNewAppointment(title, description, location, type, contact, customer, user, startDt, endDt);
             Book.addAppointment(newAppointment);
@@ -124,22 +135,50 @@ public class addModifyApptController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dateCal.setValue(LocalDate.now());
-        fillAvailableTime();
         contactCombo.setItems(allContact);
         customerCombo.setItems(allCustomer);
         userCombo.setItems(allUser);
-        userCombo.getSelectionModel().select(loggedinUser);
-        customerCombo.setPromptText("Choose customer for this appointment");
-        contactCombo.setPromptText("Choose contact for this appointment");
+
+        if (selectedAppointment == null) {
+            addModifyAppointmentLabel.setText("Add New Appointment");
+            dateCal.setValue(LocalDate.now());
+            customerCombo.setPromptText("Choose customer for this appointment");
+            contactCombo.setPromptText("Choose contact for this appointment");
+            userCombo.getSelectionModel().select(loggedinUser);
+            fillAvailableTime();
+        } else {
+            addModifyAppointmentLabel.setText("Modify Appointment");
+            String id = String.valueOf(selectedAppointment.getId());
+            String title = selectedAppointment.getTitle();
+            String desc = selectedAppointment.getDescription();
+            String type = selectedAppointment.getType();
+            String location = selectedAppointment.getLocation();
+            Contact contact = selectedAppointment.contact();
+            User user = selectedAppointment.user();
+            Customer customer = selectedAppointment.customer();
+            LocalDate date = selectedAppointment.getStart().toLocalDate();
+            LocalDateTime start = selectedAppointment.getStart();
+            LocalDateTime end = selectedAppointment.getEnd();
+
+            idInput.setText(id);
+            titleInput.setText(title);
+            descriptionInput.setText(desc);
+            typeInput.setText(type);
+            locationInput.setText(location);
+            contactCombo.getSelectionModel().select(contact);
+            userCombo.getSelectionModel().select(user);
+            customerCombo.getSelectionModel().select(customer);
+            dateCal.setValue(date);
+            fillAvailableTime();
+            startCombo.getSelectionModel().select(start.format(format));
+            endCombo.getSelectionModel().select(end.format(format));
+        }
     }
 
     private void fillAvailableTime() {
         startCombo.getItems().clear();
         endCombo.getItems().clear();
         LocalDate localDate = dateCal.getValue();
-        ZoneId targetZoneId = ZoneId.of("America/New_York");
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm a");
         ZoneId userZoneId = ZonedDateTime.now().getZone();
         ZonedDateTime estStart = ZonedDateTime.of(localDate,LocalTime.of(8,0), targetZoneId);
         ZonedDateTime estEnd = ZonedDateTime.of(localDate,LocalTime.of(22,0), targetZoneId);
@@ -155,5 +194,26 @@ public class addModifyApptController implements Initializable {
 
     public void onSelectDate(ActionEvent actionEvent) {
         fillAvailableTime();
+    }
+
+    public String checkTimeOverlap (LocalDateTime start, LocalDateTime end, ObservableList<Appointment> appointments) {
+        StringBuilder overlapTimes = new StringBuilder("");
+
+        for(int i = 0; i < appointments.size(); ++i) {
+            Appointment currentAppt = appointments.get(i);
+            LocalDateTime apptStart = currentAppt.getStart();
+            LocalDateTime apptEnd = currentAppt.getEnd();
+
+            boolean startWithinRange = (start.isAfter(apptStart) || start.isEqual(apptStart)) && start.isBefore(apptEnd);
+            boolean endWithinRange = end.isAfter(apptStart) && (end.isBefore(apptEnd) || end.isEqual(apptEnd));
+            boolean isRangeCover = (start.isBefore(apptStart) || start.isEqual(apptStart)) && (end.isAfter(apptEnd) || end.isEqual(apptEnd));
+            boolean hasOverlap = startWithinRange || endWithinRange || isRangeCover;
+
+            if (hasOverlap == true) {
+                overlapTimes.append("There is a appointment overlap. (" + apptStart.format(format) + " ~ " + apptEnd.format(format) + ")");
+                overlapTimes.append(System.lineSeparator());
+            }
+        }
+        return overlapTimes.toString();
     }
 }

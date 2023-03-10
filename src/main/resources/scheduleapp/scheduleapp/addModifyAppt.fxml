@@ -75,7 +75,7 @@
                               <Font name="Calibri" size="14.0" />
                            </font>
                         </Label>
-                        <TextField disable="true" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" promptText="Auto generated ID" GridPane.columnIndex="1" />
+                        <TextField fx:id="idInput" disable="true" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" promptText="Auto generated ID" GridPane.columnIndex="1" />
                         <TextField fx:id="titleInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="descriptionInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="locationInput" maxWidth="200.0" prefHeight="22.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />

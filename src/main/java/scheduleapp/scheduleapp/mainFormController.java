@@ -1,10 +1,8 @@
 package scheduleapp.scheduleapp;
 
 import helper.JDBC;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -17,6 +15,7 @@ import model.Customer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -46,7 +45,12 @@ public class mainFormController implements Initializable {
         loginFormController.loadNewScene(actionEvent, "addModifyAppt.fxml", 1050, 700);
     }
 
-    public void modifyAppointment(ActionEvent actionEvent) {
+    public void modifyAppointment(ActionEvent actionEvent) throws IOException {
+        Appointment selectedAppointment = (Appointment) appointmentsTable.getSelectionModel().getSelectedItem();
+        if (selectedAppointment == null)
+            return;
+        addModifyApptController.setSelectedAppointment(selectedAppointment);
+        loginFormController.loadNewScene(actionEvent, "addModifyAppt.fxml", 1050, 700);
     }
 
     public void deleteAppointment(ActionEvent actionEvent) {

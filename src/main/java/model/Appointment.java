@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Appointment {
     private int id;
@@ -67,9 +68,7 @@ public class Appointment {
         return title;
     }
 
-    public LocalDateTime getStart() {
-        return start;
-    }
+    public LocalDateTime getStart() { return start; }
 
     public LocalDateTime getEnd() {
         return end;
