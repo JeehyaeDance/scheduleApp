@@ -34,6 +34,7 @@ public class Book {
     }
     public static ObservableList<Customer> getAllCustomers() { return allCustomers; }
     public static void addAppointment(Appointment newAppointment) { allAppointments.add(newAppointment); }
+    public static void updateAppointment(int index, Appointment updatedAppointment) {allAppointments.set(index, updatedAppointment); }
     public static ObservableList<Appointment> getAllAppointments() { return allAppointments; }
     public static ObservableList<FirstLevelDivision> getAllDivisions() { return allDivisions; }
     public static ObservableList<Country> getAllCountries() { return allCountries; }

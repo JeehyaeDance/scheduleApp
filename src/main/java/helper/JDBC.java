@@ -460,4 +460,44 @@ public abstract class JDBC {
         }
         return newAppointment;
     }
+
+    public static Appointment modifyAppointment(int appointmentId, User loggedInUser, String title, String description, String location, String type, Contact contact, Customer customer, User user, LocalDateTime startDt, LocalDateTime endDt) {
+        ResultSet res;
+        Appointment updatedAppointment = null;
+
+        String updateQuery = "UPDATE `appointments` SET Title=?, Description=?, Location=?, Type=?, Start=?, End=?, Customer_ID=?, User_ID=?, Contact_ID=?, Last_Update=NOW(), Last_Updated_By=? " +
+                "WHERE `Appointment_ID` =?";
+        try {
+            PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+            updateStatement.setString(1, title);
+            updateStatement.setString(2, description);
+            updateStatement.setString(3, location);
+            updateStatement.setString(4, type);
+            updateStatement.setTimestamp(5, Timestamp.valueOf(startDt));
+            updateStatement.setTimestamp(6, Timestamp.valueOf(endDt));
+            updateStatement.setInt(7, customer.getId());
+            updateStatement.setInt(8, user.getId());
+            updateStatement.setInt(9, contact.getId());
+            updateStatement.setString(10, loggedInUser.getName());
+            updateStatement.setInt(11, appointmentId);
+            updateStatement.execute();
+
+            String getQuery = "SELECT * FROM `appointments` WHERE `Appointment_ID` =?";
+            PreparedStatement getStatement = connection.prepareStatement(getQuery);
+            getStatement.setInt(1, appointmentId);
+            res = getStatement.executeQuery();
+
+            if(res.next()) {
+                LocalDateTime createDate = res.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = res.getString("Created_By");
+                LocalDateTime lastUpdate = res.getTimestamp("Last_Update").toLocalDateTime();
+
+                updatedAppointment = new Appointment(appointmentId, title, description, location, type, startDt, endDt, createDate,createdBy,lastUpdate,loggedInUser.getName(), customer.getId(), user.getId(), contact.getId());
+            }
+        }
+        catch(SQLException ex) {
+            System.out.println("error from modifyAppointment: " + ex);
+        }
+        return updatedAppointment;
+    }
 }

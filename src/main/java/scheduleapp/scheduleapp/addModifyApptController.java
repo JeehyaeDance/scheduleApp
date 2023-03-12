@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.util.Callback;
 import model.*;
 
 import java.io.IOException;
@@ -111,7 +110,7 @@ public class addModifyApptController implements Initializable {
         ObservableList<Appointment> appointmentsForThisCustomer = JDBC.getAppointmentsByCustomer(customer);
 
         if (appointmentsForThisCustomer.size() > 0) {
-            String overlapMessage = checkTimeOverlap(startDt, endDt, appointmentsForThisCustomer);
+            String overlapMessage = checkTimeOverlap(startDt, endDt, appointmentsForThisCustomer, selectedAppointment);
             if (overlapMessage.length() > 0) {
                 errorMessage.setText(overlapMessage);
                 return;
@@ -122,9 +121,9 @@ public class addModifyApptController implements Initializable {
             Appointment newAppointment = JDBC.addNewAppointment(title, description, location, type, contact, customer, user, startDt, endDt);
             Book.addAppointment(newAppointment);
         } else {
-//            int replaceIndex = Book.getAllCustomers().indexOf(selectedCustomer);
-//            Customer updatedCustomer = JDBC.modifyCustomer(name, address, postalCode, phone, selectedDivision.getId(), selectedCustomer.getId());
-//            Book.updateCustomer(replaceIndex, updatedCustomer);
+            int replaceIndex = Book.getAllAppointments().indexOf(selectedAppointment);
+            Appointment updatedAppointment = JDBC.modifyAppointment(selectedAppointment.getId(), loggedinUser, title, description, location, type, contact, customer, user, startDt, endDt);
+            Book.updateAppointment(replaceIndex, updatedAppointment);
         }
         toMainForm(actionEvent);
     }
@@ -196,22 +195,24 @@ public class addModifyApptController implements Initializable {
         fillAvailableTime();
     }
 
-    public String checkTimeOverlap (LocalDateTime start, LocalDateTime end, ObservableList<Appointment> appointments) {
+    public String checkTimeOverlap (LocalDateTime start, LocalDateTime end, ObservableList<Appointment> appointments, Appointment prevAppointment) {
         StringBuilder overlapTimes = new StringBuilder("");
 
         for(int i = 0; i < appointments.size(); ++i) {
             Appointment currentAppt = appointments.get(i);
-            LocalDateTime apptStart = currentAppt.getStart();
-            LocalDateTime apptEnd = currentAppt.getEnd();
+            if (currentAppt.getId() != prevAppointment.getId()) {
+                LocalDateTime apptStart = currentAppt.getStart();
+                LocalDateTime apptEnd = currentAppt.getEnd();
 
-            boolean startWithinRange = (start.isAfter(apptStart) || start.isEqual(apptStart)) && start.isBefore(apptEnd);
-            boolean endWithinRange = end.isAfter(apptStart) && (end.isBefore(apptEnd) || end.isEqual(apptEnd));
-            boolean isRangeCover = (start.isBefore(apptStart) || start.isEqual(apptStart)) && (end.isAfter(apptEnd) || end.isEqual(apptEnd));
-            boolean hasOverlap = startWithinRange || endWithinRange || isRangeCover;
+                boolean startWithinRange = (start.isAfter(apptStart) || start.isEqual(apptStart)) && start.isBefore(apptEnd);
+                boolean endWithinRange = end.isAfter(apptStart) && (end.isBefore(apptEnd) || end.isEqual(apptEnd));
+                boolean isRangeCover = (start.isBefore(apptStart) || start.isEqual(apptStart)) && (end.isAfter(apptEnd) || end.isEqual(apptEnd));
+                boolean hasOverlap = startWithinRange || endWithinRange || isRangeCover;
 
-            if (hasOverlap == true) {
-                overlapTimes.append("There is a appointment overlap. (" + apptStart.format(format) + " ~ " + apptEnd.format(format) + ")");
-                overlapTimes.append(System.lineSeparator());
+                if (hasOverlap == true) {
+                    overlapTimes.append("There is a appointment overlap. (" + apptStart.format(format) + " ~ " + apptEnd.format(format) + ")");
+                    overlapTimes.append(System.lineSeparator());
+                }
             }
         }
         return overlapTimes.toString();
